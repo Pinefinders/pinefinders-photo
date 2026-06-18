@@ -156,7 +156,6 @@
     generateBtn.disabled = loading;
     generateBtn.textContent = loading ? 'Generating…' : 'Place in Showroom';
     status.style.display = loading ? 'block' : 'none';
-    if (!loading) errorMsg.style.display = 'none';
   }
 
   function clearResult() {
