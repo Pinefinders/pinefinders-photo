@@ -17,6 +17,7 @@ export default async function handler(req, res) {
   if (!furnitureBase64) return res.status(400).json({ error: 'No furniture image provided' });
   if (!wallBase64)      return res.status(400).json({ error: 'No wall reference image provided' });
 
+  // Build dynamic sections of the prompt
   const typeStr = furnitureType
     ? `Furniture type: ${furnitureType}`
     : 'Furniture type: as shown in the photograph — identify it from the image';
@@ -81,7 +82,7 @@ Produce a realistic showroom photograph that appears to have been taken inside t
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1/models/gemini-3.1-flash-image:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -94,7 +95,7 @@ Produce a realistic showroom photograph that appears to have been taken inside t
             ]
           }],
           generationConfig: {
-            responseModalities: ['IMAGE']
+            responseModalities: ['TEXT', 'IMAGE']
           }
         })
       }
