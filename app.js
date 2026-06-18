@@ -33,8 +33,6 @@
   let selectedFurniture = null;
   let selectedWall      = null;
 
-  // ── Init: load saved wall photo ───────────────────────────────────────────
-
   (function loadSavedWall() {
     try {
       const saved = localStorage.getItem(WALL_STORAGE_KEY);
@@ -58,8 +56,6 @@
     selectedWall = null;
   }
 
-  // ── Furniture upload ──────────────────────────────────────────────────────
-
   furnitureInput.addEventListener('change', function () {
     const file = this.files[0];
     if (file) handleFurnitureFile(file);
@@ -71,16 +67,14 @@
 
   function handleFurnitureFile(file) {
     furnitureName.textContent = file.name;
-    fileToBase64(file).then(function (dataUrl) {
+    resizeImage(file).then(function (dataUrl) {
       const base64 = dataUrl.split(',')[1];
-      selectedFurniture = { base64, mimeType: file.type || 'image/jpeg' };
+      selectedFurniture = { base64, mimeType: 'image/jpeg' };
       furnitureImg.src = dataUrl;
       furniturePreview.style.display = 'block';
       clearResult();
     });
   }
-
-  // ── Wall photo upload ─────────────────────────────────────────────────────
 
   wallInput.addEventListener('change', function () {
     const file = this.files[0];
@@ -97,9 +91,9 @@
 
   function handleWallFile(file) {
     wallName.textContent = file.name;
-    fileToBase64(file).then(function (dataUrl) {
+    resizeImage(file).then(function (dataUrl) {
       const base64 = dataUrl.split(',')[1];
-      const mimeType = file.type || 'image/jpeg';
+      const mimeType = 'image/jpeg';
       selectedWall = { base64, mimeType };
       try {
         localStorage.setItem(WALL_STORAGE_KEY, JSON.stringify({ base64, mimeType }));
@@ -112,8 +106,6 @@
       clearResult();
     });
   }
-
-  // ── Generate ──────────────────────────────────────────────────────────────
 
   generateBtn.addEventListener('click', async function () {
     if (!selectedFurniture) {
@@ -168,8 +160,6 @@
     }
   });
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
-
   function setupDragDrop(zone, onFile) {
     zone.addEventListener('dragover', function (e) {
       e.preventDefault();
@@ -186,11 +176,26 @@
     });
   }
 
-  function fileToBase64(file) {
+  function resizeImage(file, maxPx) {
+    maxPx = maxPx || 1600;
     return new Promise(function (resolve, reject) {
       const reader = new FileReader();
-      reader.onload = function (e) { resolve(e.target.result); };
       reader.onerror = reject;
+      reader.onload = function (e) {
+        const img = new Image();
+        img.onerror = reject;
+        img.onload = function () {
+          const scale = Math.min(1, maxPx / Math.max(img.width, img.height));
+          const w = Math.round(img.width  * scale);
+          const h = Math.round(img.height * scale);
+          const canvas = document.createElement('canvas');
+          canvas.width  = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', 0.85));
+        };
+        img.src = e.target.result;
+      };
       reader.readAsDataURL(file);
     });
   }
