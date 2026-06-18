@@ -6,29 +6,45 @@
   <title>Pinefinders Photo Tool</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Georgia, 'Times New Roman', serif; background: #f5f0ea; color: #2c2c2c; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
-    header { text-align: center; margin-bottom: 40px; }
+    body { font-family: Georgia, 'Times New Roman', serif; background: #f5f0ea; color: #2c2c2c; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px 20px 60px; }
+    header { text-align: center; margin-bottom: 36px; }
     header h1 { font-size: 1.8rem; font-weight: normal; letter-spacing: 0.05em; color: #3a2e1e; }
     header p { font-size: 0.9rem; color: #7a6a55; margin-top: 6px; font-style: italic; }
-    .card { background: #fff; border: 1px solid #ddd5c8; border-radius: 4px; padding: 32px; width: 100%; max-width: 640px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-    .upload-zone { border: 2px dashed #c8bfb0; border-radius: 4px; padding: 36px 20px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; position: relative; }
+    .card { background: #fff; border: 1px solid #ddd5c8; border-radius: 4px; padding: 28px 32px; width: 100%; max-width: 660px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .section-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: #9a8a75; margin-bottom: 10px; }
+    .section { margin-bottom: 24px; }
+    .upload-zone { border: 2px dashed #c8bfb0; border-radius: 4px; padding: 28px 16px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; position: relative; }
     .upload-zone:hover, .upload-zone.drag-over { border-color: #8b6f47; background: #faf7f3; }
     .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-    .upload-icon { font-size: 2.4rem; margin-bottom: 10px; display: block; }
-    .upload-zone p { color: #7a6a55; font-size: 0.95rem; }
-    .upload-zone .file-name { margin-top: 8px; font-size: 0.85rem; color: #3a2e1e; font-style: normal; }
-    #preview-section { display: none; margin-top: 20px; }
-    #preview-section img { width: 100%; border-radius: 4px; border: 1px solid #ddd5c8; }
-    #generate-btn { display: none; width: 100%; margin-top: 20px; padding: 14px; background: #3a2e1e; color: #f5f0ea; font-family: Georgia, serif; font-size: 1rem; letter-spacing: 0.06em; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
+    .upload-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+    .upload-zone p { color: #7a6a55; font-size: 0.9rem; }
+    .upload-zone .file-name { margin-top: 6px; font-size: 0.82rem; color: #3a2e1e; font-style: normal; }
+    .preview-thumb { display: none; margin-top: 10px; }
+    .preview-thumb img { width: 100%; max-height: 220px; object-fit: contain; border-radius: 4px; border: 1px solid #ddd5c8; background: #f5f0ea; }
+    .wall-saved { display: none; border: 1px solid #ddd5c8; border-radius: 4px; overflow: hidden; }
+    .wall-saved-img { width: 100%; max-height: 160px; object-fit: cover; display: block; }
+    .wall-saved-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #faf7f3; border-top: 1px solid #ddd5c8; }
+    .wall-saved-bar span { font-size: 0.8rem; color: #7a6a55; font-style: italic; }
+    .btn-text { background: none; border: none; color: #3a2e1e; font-family: Georgia, serif; font-size: 0.82rem; cursor: pointer; text-decoration: underline; padding: 0; }
+    .btn-text:hover { color: #8b6f47; }
+    .fields-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; align-items: end; }
+    .field-group label { display: block; font-size: 0.75rem; color: #9a8a75; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
+    .field-group input[type="text"], .field-group input[type="number"] { width: 100%; padding: 8px 10px; border: 1px solid #c8bfb0; border-radius: 4px; font-family: Georgia, serif; font-size: 0.9rem; color: #2c2c2c; background: #fff; transition: border-color 0.2s; }
+    .field-group input:focus { outline: none; border-color: #8b6f47; }
+    .field-group .unit { display: flex; align-items: center; }
+    .field-group .unit input { border-radius: 4px 0 0 4px; border-right: none; }
+    .field-group .unit-label { padding: 8px 8px; background: #f5f0ea; border: 1px solid #c8bfb0; border-radius: 0 4px 4px 0; font-size: 0.82rem; color: #7a6a55; white-space: nowrap; }
+    hr { border: none; border-top: 1px solid #e8e0d4; margin: 4px 0 24px; }
+    #generate-btn { width: 100%; padding: 14px; background: #3a2e1e; color: #f5f0ea; font-family: Georgia, serif; font-size: 1rem; letter-spacing: 0.06em; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
     #generate-btn:hover:not(:disabled) { background: #5c4a2e; }
     #generate-btn:disabled { background: #b0a898; cursor: not-allowed; }
-    #status { display: none; margin-top: 16px; text-align: center; font-size: 0.9rem; color: #7a6a55; font-style: italic; }
+    #status { display: none; margin-top: 14px; text-align: center; font-size: 0.88rem; color: #7a6a55; font-style: italic; }
+    #error-msg { display: none; margin-top: 14px; padding: 12px 16px; background: #fdf0f0; border: 1px solid #e8c0c0; border-radius: 4px; color: #8b2020; font-size: 0.88rem; }
     #result-section { display: none; margin-top: 28px; }
-    #result-section h2 { font-size: 0.8rem; font-weight: normal; color: #7a6a55; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
-    #result-section img { width: 100%; border-radius: 4px; border: 1px solid #ddd5c8; }
+    #result-img { width: 100%; border-radius: 4px; border: 1px solid #ddd5c8; }
     #download-btn { display: inline-block; margin-top: 14px; padding: 10px 24px; background: transparent; border: 1px solid #3a2e1e; color: #3a2e1e; font-family: Georgia, serif; font-size: 0.9rem; letter-spacing: 0.05em; border-radius: 4px; cursor: pointer; text-decoration: none; transition: background 0.2s, color 0.2s; }
     #download-btn:hover { background: #3a2e1e; color: #f5f0ea; }
-    #error-msg { display: none; margin-top: 16px; padding: 12px 16px; background: #fdf0f0; border: 1px solid #e8c0c0; border-radius: 4px; color: #8b2020; font-size: 0.88rem; }
+    @media (max-width: 520px) { .fields-row { grid-template-columns: 1fr 1fr; } .fields-row .field-group:first-child { grid-column: 1 / -1; } }
   </style>
 </head>
 <body>
@@ -37,20 +53,71 @@
     <p>Place furniture in the showroom</p>
   </header>
   <div class="card">
-    <div class="upload-zone" id="upload-zone">
-      <input type="file" id="photo-input" accept="image/*" />
-      <span class="upload-icon">📷</span>
-      <p>Click or drag a photo here</p>
-      <p class="file-name" id="file-name"></p>
+    <div class="section">
+      <div class="section-label">Furniture photograph</div>
+      <div class="upload-zone" id="furniture-zone">
+        <input type="file" id="furniture-input" accept="image/*" />
+        <span class="upload-icon">🪑</span>
+        <p>Click or drag the furniture photo here</p>
+        <p class="file-name" id="furniture-name"></p>
+      </div>
+      <div class="preview-thumb" id="furniture-preview">
+        <img id="furniture-img" src="" alt="Furniture preview" />
+      </div>
     </div>
-    <div id="preview-section">
-      <img id="preview-img" src="" alt="Preview" />
+    <div class="section">
+      <div class="section-label">Details <span style="font-style:italic;text-transform:none;letter-spacing:0">(optional)</span></div>
+      <div class="fields-row">
+        <div class="field-group">
+          <label for="furniture-type">Type of furniture</label>
+          <input type="text" id="furniture-type" placeholder="e.g. Victorian pine wardrobe" />
+        </div>
+        <div class="field-group">
+          <label>Height</label>
+          <div class="unit">
+            <input type="number" id="dim-h" placeholder="84" min="1" />
+            <span class="unit-label">"</span>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Width</label>
+          <div class="unit">
+            <input type="number" id="dim-w" placeholder="43" min="1" />
+            <span class="unit-label">"</span>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Depth</label>
+          <div class="unit">
+            <input type="number" id="dim-d" placeholder="21" min="1" />
+            <span class="unit-label">"</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <div class="section">
+      <div class="section-label">Showroom wall reference</div>
+      <div class="wall-saved" id="wall-saved">
+        <img class="wall-saved-img" id="wall-saved-img" src="" alt="Saved showroom wall" />
+        <div class="wall-saved-bar">
+          <span>Saved showroom reference</span>
+          <button class="btn-text" id="wall-change-btn">Change</button>
+        </div>
+      </div>
+      <div class="upload-zone" id="wall-zone" style="display:none">
+        <input type="file" id="wall-input" accept="image/*" />
+        <span class="upload-icon">🏭</span>
+        <p>Click or drag your showroom wall photo here</p>
+        <p style="font-size:0.78rem;color:#9a8a75;margin-top:4px">Saved automatically for next time</p>
+        <p class="file-name" id="wall-name"></p>
+      </div>
     </div>
     <button id="generate-btn">Place in Showroom</button>
-    <div id="status">Sending to Gemini…</div>
+    <div id="status">Sending to Gemini — this may take 15–30 seconds…</div>
     <div id="error-msg"></div>
     <div id="result-section">
-      <h2>Result</h2>
+      <div class="section-label" style="margin-top:28px">Result</div>
       <img id="result-img" src="" alt="Result" />
       <br />
       <a id="download-btn" download="pinefinders-showroom.jpg">Download Image</a>
