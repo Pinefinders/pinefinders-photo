@@ -144,6 +144,7 @@
         let msg = json.error || 'Unknown error from API';
         if (json.reason) msg += ' (reason: ' + json.reason + ')';
         if (json.geminiText) msg += ' — Gemini said: ' + json.geminiText;
+        if (json.fullResponse) msg += ' | RAW: ' + json.fullResponse;
         throw new Error(msg);
       }
 
