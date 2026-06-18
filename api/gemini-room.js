@@ -93,7 +93,10 @@ Produce a realistic showroom photograph that appears to have been taken inside t
               { inline_data: { mime_type: furnitureMimeType || 'image/jpeg', data: furnitureBase64 } },
               { inline_data: { mime_type: wallMimeType      || 'image/jpeg', data: wallBase64      } }
             ]
-          }]
+          }],
+          generationConfig: {
+            response_modalities: ['TEXT', 'IMAGE']
+          }
         })
       }
     );
@@ -118,7 +121,8 @@ Produce a realistic showroom photograph that appears to have been taken inside t
       return res.status(500).json({
         error: 'Gemini did not return an image',
         reason,
-        geminiText: textPart?.text || null
+        geminiText: textPart?.text || null,
+        fullResponse: JSON.stringify(data).slice(0, 500)
       });
     }
 
