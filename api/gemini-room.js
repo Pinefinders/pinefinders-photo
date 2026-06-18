@@ -94,7 +94,7 @@ Produce a realistic showroom photograph that appears to have been taken inside t
             ]
           }],
           generationConfig: {
-            responseModalities: ['image', 'text']
+            responseModalities: ['IMAGE']
           }
         })
       }
@@ -114,8 +114,14 @@ Produce a realistic showroom photograph that appears to have been taken inside t
     const imagePart = parts.find(p => p.inline_data);
 
     if (!imagePart) {
+      const textPart = parts.find(p => p.text);
+      const reason = data.candidates?.[0]?.finishReason || 'unknown';
       console.error('No image in response:', JSON.stringify(data));
-      return res.status(500).json({ error: 'Gemini did not return an image', raw: data });
+      return res.status(500).json({
+        error: 'Gemini did not return an image',
+        reason,
+        geminiText: textPart?.text || null
+      });
     }
 
     return res.status(200).json({
